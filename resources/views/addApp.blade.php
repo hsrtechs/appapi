@@ -19,7 +19,7 @@
                 <h2>Add App</h2>
             </div>
             <div class="panel-body">
-                <form class="text-center" method="post" action="{{ '/' }}">
+                <form class="text-center" method="post" action="{{ url('/') }}">
                     <input type="hidden" name="_method" value="put" />
                     <div class="form-group">
                         <input class="form-control" name="name" type="text" placeholder="App Name" value="{{ getInput('name') }}"/>

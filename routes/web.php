@@ -11,6 +11,8 @@
 |
 */
 
+$app->get('/login', "LoginController@login");
+
 $app->get('/', "AdminController@addApp");
 
 $app->put('/',"AdminController@addAppHandel");

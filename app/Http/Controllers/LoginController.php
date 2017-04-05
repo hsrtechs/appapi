@@ -12,9 +12,9 @@ class LoginController extends Controller
     {
     }
 
-    public function login(Request $request)
+    public function login()
     {
-
+        return view('login');
     }
 
     public function logout(Request $request)
