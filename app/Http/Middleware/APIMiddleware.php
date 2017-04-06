@@ -3,6 +3,7 @@
 namespace App\Http\Middleware;
 
 use Closure;
+use Illuminate\Http\JsonResponse;
 use function response;
 
 class APIMiddleware
@@ -17,9 +18,8 @@ class APIMiddleware
     public function handle($request, Closure $next)
     {
         if($request->isJson() && $request->expectsJson())
-        {
             return $next($request);
-        }
-        return response("	Invalid format: This service doesn't exist in that format.",405);
+        else
+            return APIError("Failed",['Invalid accept header.'],406);
     }
 }

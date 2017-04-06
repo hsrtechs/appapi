@@ -35,7 +35,11 @@ class Offer extends Model
     ];
 
     protected $appends = [
-        'validity','package'
+        'validity','package', 'validity'
+    ];
+
+    protected $hidden = [
+        'validity', 'hidden', 'created_at', 'updated_at', 'valid_until',
     ];
 
     public function scopeActive($query)

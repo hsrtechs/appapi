@@ -2,7 +2,9 @@
 
 namespace App\Http\Middleware;
 
+use App\Helpers\Session;
 use Closure;
+use function redirect;
 
 class AdminMiddleware
 {
@@ -15,6 +17,9 @@ class AdminMiddleware
      */
     public function handle($request, Closure $next)
     {
-        return $next($request);
+        if(Session::exists('admin'))
+            return $next($request);
+        else
+            return redirect(url('/login'));
     }
 }
