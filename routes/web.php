@@ -11,11 +11,13 @@
 |
 */
 
-$app->get('/login', "LoginController@login");
-
 $app->get('/', "AdminController@addApp");
 
 $app->put('/',"AdminController@addAppHandel");
+
+$app->get('/login', "LoginController@login");
+
+$app->post('/login', "LoginController@loginHandel");
 
 $app->get('list-apps',"AdminController@listOffers");
 
@@ -23,7 +25,19 @@ $app->patch('/offers/{id}/switch-visibility',"AdminController@switchOfferVisibil
 
 $app->delete('/offers/{id}/hide',"AdminController@hideOffer");
 
-$app->get('/api/v1/offers', 'APIController@getOffers');
+$app->group([
+    'prefix' => '/api/v1/'
+],function () use ($app) {
+    $app->get('offers', 'APIController@getOffers');
 
-$app->get('/api/v1/user', 'APIController@getUserData');
+    $app->get('offers/{offer}', 'APIController@getOffers');
 
+    $app->post('user', 'APIController@getUserData');
+
+    $app->post('user/credits','APIController@getUserCredits');
+
+    $app->post('user/{user}', 'APIController@getUserData');
+
+    $app->post('user/{user}/credits', 'APIController@getUserCredits');
+
+});
