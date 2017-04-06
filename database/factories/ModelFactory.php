@@ -33,7 +33,7 @@ $factory->define(App\Offer::class, function (Faker\Generator $faker) {
         'url' => $faker->url,
         'name' => $name,
         'image_location' => $faker->imageUrl(),
-        'package_id' => $name.'.'.$faker->domainName,
+        'package_id' => strrev(strtolower($name.'.'.$faker->domainName)),
         'credits' => $faker->numberBetween(0,25),
         'country' => $faker->country,
         'desc' => $faker->text,
