@@ -80,7 +80,7 @@ if(! function_exists('hasInput'))
 
 if(! function_exists('getInputs'))
 {
-    function getInputs($clear)
+    function getInputs()
     {
         return $_SESSION['input'] ?? false;
     }
