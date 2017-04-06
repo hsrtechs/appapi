@@ -1,5 +1,8 @@
 <?php
 
+use App\Admin;
+use App\Helpers\Session;
+
 if (! function_exists('bcrypt')) {
     /**
      * Hash the given value.
@@ -98,6 +101,42 @@ if(! function_exists('getInput'))
             return $return;
         }
         return false;
+    }
+}
+
+
+if(! function_exists('APIResponse'))
+{
+    function APIResponse($request, Array $data = [], int $code = 200)
+    {
+        $response = [
+            'response_code' => $code,
+            'request' => $request,
+            'data' => $data,
+        ];
+        return response($response, $code);
+    }
+}
+
+if(! function_exists('APIError'))
+{
+    function APIError($request, Array $data = ["Request Failed"], int $code = 500)
+    {
+        $response = [
+            'error_code' => $code,
+            'request' => $request,
+            'error' => $data,
+        ];
+        return response($response, $code);
+    }
+}
+
+
+if(! function_exists('loggedAdmin'))
+{
+    function loggedAdmin()
+    {
+        return Admin::findOrFail(decrypt(Session::get('admin')))->first();
     }
 }
 
