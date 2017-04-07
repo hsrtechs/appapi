@@ -158,7 +158,8 @@ if(! function_exists('loggedAdmin'))
 {
     function loggedAdmin()
     {
-        return Admin::findOrFail((Session::get('admin')))->first();
+        $admin = Admin::find((Session::get('admin')));
+        return $admin ? $admin->first() : false;
     }
 }
 

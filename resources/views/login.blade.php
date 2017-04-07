@@ -7,7 +7,7 @@
                 <p class="text-center"><strong>Login</strong></p>
             </div>
             <div class="panel-body">
-                <form method="post" action="{{ url('/login') }}">
+                <form method="post" action="/login">
                     <div class="form-group">
                         <input class="form-control" type="text" placeholder="Username" name="username"
                                value="{{ getInput('username') }}"/>

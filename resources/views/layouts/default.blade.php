@@ -28,6 +28,7 @@
         <div class="navbar-header">
             <a class="navbar-brand" href="/">Rest Client Frontend</a>
         </div>
+        @if(loggedAdmin())
         <ul class="nav navbar-nav">
             <li{!! $_SERVER['REQUEST_URI'] == '/' ? ' class ="active"' : '' !!}><a href="/">Add App</a></li>
             <li{!! $_SERVER['REQUEST_URI'] == '/list-apps' ? ' class ="active"' : '' !!}><a href="/list-apps">List Apps</a></li>
@@ -37,6 +38,7 @@
             <li><a href="/api/list">Api List</a></li>
             <li><a href="/logout">Logout</a></li>
         </ul>
+        @endif
     </div>
 </nav>
 <div class="container">
