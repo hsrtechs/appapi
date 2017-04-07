@@ -8,14 +8,15 @@ use function session_destroy;
 
 class Session
 {
-    public static function get($key)
+    public static function get($key,bool $decrypt = true)
     {
-        return  self::exists($key)? decrypt($_SESSION[$key]) : false;
+        $return = self::exists($key) ? ($_SESSION[$key]) : false;
+        return $decrypt ? decrypt($return) : $return;
     }
 
-    public static function put($key,$value = '')
+    public static function put($key,$value = '',$encrypt = true)
     {
-        $_SESSION[$key] = encrypt($value);
+        $_SESSION[$key] = $encrypt ? encrypt($value) : $value;
         return $value;
     }
 
