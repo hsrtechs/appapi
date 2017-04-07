@@ -19,18 +19,26 @@ $app->get('/login', "LoginController@login");
 
 $app->post('/login', "LoginController@loginHandel");
 
+$app->get('/logout', "LoginController@logout");
+
+$app->get('/registration', "RegistrationController@registration");
+
+$app->post('/registration', "RegistrationController@registrationHandel");
+
 $app->get('list-apps',"AdminController@listOffers");
 
 $app->patch('/offers/{id}/switch-visibility',"AdminController@switchOfferVisibility");
 
-$app->delete('/offers/{id}/hide',"AdminController@hideOffer");
+$app->delete('/offers/{id}/delete',"AdminController@deleteOffer");
+
+$app->get('/api/list',"AdminController@listAPI");
 
 $app->group([
     'prefix' => '/api/v1/'
 ],function () use ($app) {
-    $app->get('offers', 'APIController@getOffers');
+    $app->post('offers', 'APIController@getOffers');
 
-    $app->get('offers/{offer}', 'APIController@getOffers');
+    $app->post('offers/{offer}', 'APIController@getOffers');
 
     $app->post('user', 'APIController@getUserData');
 

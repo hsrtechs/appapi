@@ -10,6 +10,7 @@ use function redirect;
 use function session_abort;
 use function session_status;
 use function setInputs;
+use function status;
 use function var_dump;
 use function view;
 use function with;
@@ -28,19 +29,20 @@ class AdminController extends Controller
 
     public function addApp()
     {
-        return view('addApp');
+        return view('addApp')->with(status());
     }
 
     public function addAppHandel(Request $request)
     {
         try{
             $this->validate($request, [
-                'name' => 'required',
+                'name' => 'required|string',
                 'url' => 'required|url',
                 'package_id' => 'required|unique:offers',
                 'credits' => 'required|numeric|min:0',
                 'country' => 'required|string',
                 'img' => 'required|url',
+                'valid' => 'required|date',
             ]);
         }catch (\Illuminate\Validation\ValidationException $e)
         {
@@ -48,19 +50,23 @@ class AdminController extends Controller
             setErrors($e->getResponse()->getContent());
         }
 
-        //TODO Complete Adding Offer
+        $offer = new Offer;
+        $offer->name = $request->input('name');
+        $offer->url = $request->input('url');
+        $offer->package_id = $request->input('package_id');
+        $offer->credits = $request->input('credits');
+        $offer->country = $request->input('country');
+        $offer->image_location = $request->input('img');
+        $offer->valid_until = $request->input('valid');
 
-        return redirect($request->path());
+        $status = $offer->saveOrFail() ? 'true' : 'false';
+
+        return redirect($request->path().'?status='.$status);
     }
 
     public function listOffers()
     {
-       if(!empty($_GET['status']))
-           $status = $_GET['status'] === 'true' ? true : false;
-       else
-           $status = NULL;
-
-        return view('listApp')->with(['offers' => Offer::get(), 'status' => $status]);
+        return view('listApp')->with(status(['offers' => Offer::orderByDesc('id')->get()]));
     }
 
     public function deleteOffer($id)
@@ -84,4 +90,10 @@ class AdminController extends Controller
 
         return redirect(url('/list-apps?status='.$response));
     }
+
+    public function listAPI()
+    {
+        return view('api.list');
+    }
+
 }

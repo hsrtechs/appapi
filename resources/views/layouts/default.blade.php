@@ -26,11 +26,16 @@
 <nav class="navbar navbar-inverse">
     <div class="container">
         <div class="navbar-header">
-            <a class="navbar-brand" href="#">WebSiteName</a>
+            <a class="navbar-brand" href="/">Rest Client Frontend</a>
         </div>
         <ul class="nav navbar-nav">
             <li{!! $_SERVER['REQUEST_URI'] == '/' ? ' class ="active"' : '' !!}><a href="/">Add App</a></li>
             <li{!! $_SERVER['REQUEST_URI'] == '/list-apps' ? ' class ="active"' : '' !!}><a href="/list-apps">List Apps</a></li>
+            <li{!! $_SERVER['REQUEST_URI'] == '/registration' ? ' class ="active"' : '' !!}><a href="/registration">Registration</a></li>
+        </ul>
+        <ul class="nav navbar-nav navbar-right">
+            <li><a href="/api/list">Api List</a></li>
+            <li><a href="/logout">Logout</a></li>
         </ul>
     </div>
 </nav>

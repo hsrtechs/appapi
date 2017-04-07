@@ -20,6 +20,8 @@ class CreateAdminTable extends Migration
             $table->string('username')->unique();
             $table->string('email')->unique();
             $table->string('password');
+            $table->integer('created_by');
+            $table->ipAddress('created_by_ip');
             $table->ipAddress('last_login');
             $table->timestamps();
 

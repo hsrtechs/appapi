@@ -2,13 +2,18 @@
 namespace App\Http\Controllers;
 
 
+use function addError;
 use App\Admin;
 use App\Helpers\Session;
 use function dd;
+use function decrypt;
 use function encrypt;
+use function getErrors;
 use Illuminate\Http\Request;
+use function loggedAdmin;
 use function password_verify;
 use function redirect;
+use function setErrors;
 use function url;
 
 class LoginController extends Controller
@@ -25,30 +30,42 @@ class LoginController extends Controller
     public function logout(Request $request)
     {
         Session::destroy();
-        redirect('/');
+        return redirect('/');
     }
 
     public function loginHandel(Request $request)
     {
-        $username = $request->input('username');
-        $password = $request->input('password');
+        try{
+            $this->validate($request, [
+                'username' => 'required|exists:admins|min:4|max:25',
+            ]);
 
-        $admin = Admin::where('username',$username)->first();
+            $username = $request->input('username');
+            $password = $request->input('password');
 
-        if($admin)
-        {
+            $admin = Admin::where('username',$username)->first();
+
             if(password_verify($password,$admin->password))
             {
-                $admin = $admin->id;
+                Session::put('admin',($admin->id));
+                Session::put('login',($admin->last_login));
+
+                Admin::findOrFail($admin->id)->update(['last_login' => $request->ip()]);
+
+                return redirect(url('/'));
+
+            }else
+            {
+                setInputs($request->except('password'));
+                addError('Authentication Failed.');
+                return redirect('/login');
             }
-        }else
+
+        }catch (\Illuminate\Validation\ValidationException $e)
         {
-            $error = "";
+            setInputs($request->except('password'));
+            setErrors($e->getResponse()->getContent());
+            return redirect('/login');
         }
-
-        Session::put('admin',encrypt($admin));
-
-        redirect(url('/'));
-
     }
 }

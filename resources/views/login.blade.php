@@ -1,20 +1,22 @@
 @extends('layouts.default')
 @section('container')
-    <div class="col-md-5 col-md-offset-3">
+    @include('partials.errors')
+    <div class="col-md-5">
         <div class="panel panel-primary">
             <div class="panel-heading">
-                <h3>Login</h3>
+                <p class="text-center"><strong>Login</strong></p>
             </div>
             <div class="panel-body">
                 <form method="post" action="{{ url('/login') }}">
                     <div class="form-group">
-                        <input class="form-control" type="text" placeholder="Username" name="username" />
+                        <input class="form-control" type="text" placeholder="Username" name="username"
+                               value="{{ getInput('username') }}"/>
                     </div>
                     <div class="form-group">
-                        <input class="form-control" type="password" placeholder="Password" name="password" />
+                        <input class="form-control" type="password" placeholder="Password" name="password"/>
                     </div>
                     <div class="form-group">
-                        <input class="form-control btn btn-primary" type="submit" id="name" name="submit" />
+                        <input class="form-control btn btn-primary" type="submit" id="name" name="submit"/>
                     </div>
                 </form>
             </div>

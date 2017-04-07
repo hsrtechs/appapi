@@ -1,19 +1,19 @@
 @extends('layouts.default')
 @section('container')
-    <div class="col-md-4 col-sm-12">
-        @if(hasErrors())
-            <div class="alert alert-danger">
-                <p class="text-center"><strong>Errors</strong></p>
-
-                <ul>
-                @foreach(getErrors() as $error)
-                    <li>{{ $error[0] }}</li>
-                @endforeach
-                </ul>
-            </div>
-        @endif
-    </div>
+    @include('partials.errors')
     <div class="col-md-5 col-sm-12">
+
+        @if($status)
+            <div class="alert alert-success">
+                Successful
+            </div>
+        @elseif($status === false)
+            <div class="alert alert-danger">
+                Failed
+            </div>
+
+        @endif
+
         <div class="panel panel-primary">
             <div class="panel-heading">
                 <h2>Add App</h2>
@@ -40,7 +40,10 @@
                         <input class="form-control" name="img" type="text" placeholder="Image Url" value="{{ getInput('img') }}"/>
                     </div>
                     <div class="form-group">
-                        <input class="form-control btn btn-primary" name="package" type="submit" placeholder="Package Name"/>
+                        <input class="form-control" placeholder="Validity" name="valid" type="date"/>
+                    </div>
+                    <div class="form-group">
+                        <input class="form-control btn btn-primary" name="package" type="submit"/>
                     </div>
                 </form>
             </div>

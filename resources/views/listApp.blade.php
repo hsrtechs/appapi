@@ -37,6 +37,7 @@
                     <form method="post" action="/offers/{{ $offer->id }}/delete">
                         <input type="hidden" name="_method" value="delete" />
                         <label for="submit-{{$offer->id}}"><i class="glyphicon glyphicon-trash btn-link"></i></label>
+                        <input type="hidden" name="_method" value="delete">
                         <input type="submit" class="hidden" id="submit-{{$offer->id}}">
                     </form>
 

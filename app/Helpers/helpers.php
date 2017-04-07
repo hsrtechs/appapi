@@ -17,6 +17,19 @@ if (! function_exists('bcrypt')) {
     }
 }
 
+if(! function_exists('addError'))
+{
+    function addError($error)
+    {
+        if(!is_array($error))
+            $error = [$error];
+
+        if(hasErrors())
+            array_push($_SESSION['errors'],[$error]);
+        else
+            $_SESSION['errors'] = [$error];
+    }
+}
 if(! function_exists('setErrors'))
 {
     function setErrors($errors)
@@ -42,6 +55,16 @@ if(! function_exists('getErrors'))
         if(hasErrors())
         {
             $error = $_SESSION['errors'];
+
+            if(!is_array($error)){
+                if(is_object($error))
+                {
+                    $error = json_decode(json_encode($error),true);
+                }
+                else $error = json_decode($error,true);
+            }
+
+
             if($clear)
                 unset($_SESSION['errors']);
 
@@ -131,12 +154,24 @@ if(! function_exists('APIError'))
     }
 }
 
-
 if(! function_exists('loggedAdmin'))
 {
     function loggedAdmin()
     {
-        return Admin::findOrFail(decrypt(Session::get('admin')))->first();
+        return Admin::findOrFail((Session::get('admin')))->first();
     }
 }
 
+if(! function_exists('status'))
+{
+    function status(Array $input = []) : array
+    {
+        if(!empty($_GET['status']))
+            $status = $_GET['status'] === 'true' ? true : false;
+        else
+            $status = NULL;
+
+        $input['status'] = $status;
+        return $input;
+    }
+}
