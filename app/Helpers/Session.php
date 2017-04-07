@@ -2,18 +2,20 @@
 namespace App\Helpers;
 
 
+use function decrypt;
+use function encrypt;
 use function session_destroy;
 
 class Session
 {
     public static function get($key)
     {
-        return $_SESSION[$key] ?? false;
+        return  self::exists($key)? decrypt($_SESSION[$key]) : false;
     }
 
     public static function put($key,$value = '')
     {
-        $_SESSION[$key] = $value;
+        $_SESSION[$key] = encrypt($value);
         return $value;
     }
 
