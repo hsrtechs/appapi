@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Offer;
+use App\User;
 use Exception;
 use Illuminate\Http\Request;
 use function json_encode;
@@ -94,6 +95,18 @@ class AdminController extends Controller
     public function listAPI()
     {
         return view('api.list');
+    }
+
+    public function listUsers()
+    {
+        return view('users.list', status(['users' => User::orderByDesc('id')->get()]));
+    }
+
+    public function deleteUser($id)
+    {
+        $response = User::findOrFail($id)->delete() ? 'true' : 'false';
+
+        return redirect(url('/list-users?status=' . $response));
     }
 
 }
