@@ -12,10 +12,8 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 {
     use Authenticatable, Authorizable;
 
-    protected $table = 'users';
-
     public $timestamps = true;
-
+    protected $table = 'users';
     /**
      * The attributes that are mass assignable.
      *
@@ -39,8 +37,26 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'verified' => 'boolean',
     ];
 
+    protected $appends = ['name'];
+
     public function isVerified() : boolean
     {
         return $this->verified == true;
+    }
+
+    public function getNameAttribute()
+    {
+        return $this->firstname . ' ' . $this->lastname;
+    }
+
+    public function addCredits(float $credits)
+    {
+        $this->credits += $credits;
+        return $this->saveOrFail();
+    }
+
+    public function installLogs()
+    {
+        return $this->hasMany('App\InstallLog');
     }
 }

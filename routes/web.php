@@ -27,6 +27,10 @@ $app->post('/registration', "RegistrationController@registrationHandel");
 
 $app->get('list-apps',"AdminController@listOffers");
 
+$app->get('list-users', "AdminController@listUsers");
+
+$app->delete('/users/{id}/delete', "AdminController@deleteUser");
+
 $app->patch('/offers/{id}/switch-visibility',"AdminController@switchOfferVisibility");
 
 $app->delete('/offers/{id}/delete',"AdminController@deleteOffer");
@@ -47,5 +51,8 @@ $app->group([
     $app->post('user/{user}', 'APIController@getUserData');
 
     $app->post('user/{user}/credits', 'APIController@getUserCredits');
+
+    $app->post('installs/success', 'APIController@offerInstallLogs');
+
 
 });

@@ -36,7 +36,8 @@
                 <td>
                     <form method="post" action="/offers/{{ $offer->id }}/delete">
                         <input type="hidden" name="_method" value="delete" />
-                        <label for="submit-{{$offer->id}}"><i class="glyphicon glyphicon-trash btn-link"></i></label>
+                        <label for="submit-{{$offer->id}}"><i
+                                    class="glyphicon glyphicon-trash btn btn-danger"></i></label>
                         <input type="hidden" name="_method" value="delete">
                         <input type="submit" class="hidden" id="submit-{{$offer->id}}">
                     </form>
@@ -44,7 +45,8 @@
                     <form method="post" action="/offers/{{ $offer->id }}/switch-visibility">
                         <input type="hidden" name="_method" value="patch" />
                         <label for="visible-{{$offer->id}}">
-                            <i class="glyphicon glyphicon-eye-{{ $offer->hidden ? 'open' : 'close' }}" title="{{ $offer->hidden ? 'Make Visible' : 'hide' }}"></i>
+                            <i class="glyphicon glyphicon-eye-{{ $offer->hidden ? 'open' : 'close' }} btn btn-{{ $offer->hidden ? 'success' : 'warning' }}"
+                               title="{{ $offer->hidden ? 'Make Visible' : 'hide' }}"></i>
                         </label>
                         <input type="submit" class="hidden" id="visible-{{$offer->id}}">
                     </form>

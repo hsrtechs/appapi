@@ -32,6 +32,8 @@
         <ul class="nav navbar-nav">
             <li{!! $_SERVER['REQUEST_URI'] == '/' ? ' class ="active"' : '' !!}><a href="/">Add App</a></li>
             <li{!! $_SERVER['REQUEST_URI'] == '/list-apps' ? ' class ="active"' : '' !!}><a href="/list-apps">List Apps</a></li>
+            <li{!! $_SERVER['REQUEST_URI'] == '/list-users' ? ' class ="active"' : '' !!}><a href="/list-users">List
+                    Users</a></li>
             <li{!! $_SERVER['REQUEST_URI'] == '/registration' ? ' class ="active"' : '' !!}><a href="/registration">Registration</a></li>
         </ul>
         <ul class="nav navbar-nav navbar-right">

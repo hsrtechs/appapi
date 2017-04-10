@@ -3,15 +3,13 @@
 namespace App\Http\Controllers;
 
 use function APIError;
-use App\Helpers\APIResponse;
+use App\InstallLog;
 use App\Offer;
 use App\User;
-use Illuminate\Http\JsonResponse;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use function integerValue;
 use function is_integer;
-use function is_numeric;
-use function response;
+
 
 class APIController extends Controller
 {
@@ -76,5 +74,34 @@ class APIController extends Controller
             return APIError('GetUserCredits',['Entry not found' => 'The item you are trying to access cannot be found.']);
     }
 
+    public function offerInstallLogs(Request $request)
+    {
+
+        if (!$request->has('package'))
+            return APIError('OfferLogs', ["Invalid id" => "The pre-requisite id is invalid or not found."]);
+
+        $user = Auth::user();
+
+        $package = $request->input('package');
+
+        if (InstallLog::where('user_id', $user->id)->where('package', $package)->count())
+            return APIError('OfferLogs', ["Already availed" => "The offer is already availed."]);
+
+        $offer = Offer::where('package_id', $package)->first();
+
+        $credits = $offer->credits;
+
+        $log = new InstallLog;
+        $log->package = $package;
+        $log->credits = $credits;
+        $log->user_id = $user->id;
+        $log->device_id = $user->device_id;
+
+        if ($log->saveOrFail() && $user->addCredits($credits))
+            return APIResponse("OfferLogs", ['user' => $user]);
+        else
+            return APIError("OfferLogs", ['error' => 'Failed for some reason']);
+
+    }
 
 }
