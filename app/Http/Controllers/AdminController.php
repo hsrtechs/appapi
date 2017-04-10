@@ -45,24 +45,26 @@ class AdminController extends Controller
                 'img' => 'required|url',
                 'valid' => 'required|date',
             ]);
+
+
+            $offer = new Offer;
+            $offer->name = $request->input('name');
+            $offer->url = $request->input('url');
+            $offer->package_id = $request->input('package_id');
+            $offer->credits = $request->input('credits');
+            $offer->country = $request->input('country');
+            $offer->image_location = $request->input('img');
+            $offer->valid_until = $request->input('valid');
+
+            $status = $offer->saveOrFail() ? 'true' : 'false';
+
+            return redirect($request->path() . '?status=' . $status);
+
         }catch (\Illuminate\Validation\ValidationException $e)
         {
             setInputs($request->all());
             setErrors($e->getResponse()->getContent());
         }
-
-        $offer = new Offer;
-        $offer->name = $request->input('name');
-        $offer->url = $request->input('url');
-        $offer->package_id = $request->input('package_id');
-        $offer->credits = $request->input('credits');
-        $offer->country = $request->input('country');
-        $offer->image_location = $request->input('img');
-        $offer->valid_until = $request->input('valid');
-
-        $status = $offer->saveOrFail() ? 'true' : 'false';
-
-        return redirect($request->path().'?status='.$status);
     }
 
     public function listOffers()
