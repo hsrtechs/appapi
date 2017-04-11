@@ -55,6 +55,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->saveOrFail();
     }
 
+    public function deductCredits(float $credits)
+    {
+        $this->credits -= $credits;
+        return $this->saveOrFail();
+    }
+
     public function installLogs()
     {
         return $this->hasMany('App\InstallLog');

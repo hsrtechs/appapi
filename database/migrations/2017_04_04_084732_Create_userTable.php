@@ -21,7 +21,7 @@ class CreateUserTable extends Migration
             $table->string('number')->unique();
             $table->string('email')->unique();
             $table->string('country');
-            $table->integer('credits',false,true);
+            $table->integer('credits', false, true)->default(0);
             $table->string('device_id',16)->unique();
             $table->string('access_token',64)->unique();
 

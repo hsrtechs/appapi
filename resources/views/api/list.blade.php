@@ -64,8 +64,8 @@
             <tr class="bg-primary">
                 <th class="col-md-3 col-sm-3">API Name</th>
                 <th class="col-md-1 col-sm-1">Method</th>
-                <th class="col-md-4 col-sm-4">Resource URL</th>
-                <th class="col-md-4 col-sm-4">Options</th>
+                <th class="col-md-3 col-sm-3">Resource URL</th>
+                <th class="col-md-5 col-sm-5">Options || Parameters</th>
             </tr>
             </thead>
             <tbody>
@@ -84,14 +84,26 @@
             <tr>
                 <td>Get Authenticated Users</td>
                 <td>POST</td>
-                <td>/api/v1/users</td>
+                <td>/api/v1/user</td>
                 <td></td>
+            </tr>
+            <tr>
+                <td>Register User</td>
+                <td>POST</td>
+                <td>/api/v1/user/create</td>
+                <td>{"first_name", "last_name", "number", "email", "device_id", "country"}</td>
             </tr>
             <tr>
                 <td>Get Credits of Authenticated user</td>
                 <td>POST</td>
                 <td>/api/v1/user/credits</td>
                 <td></td>
+            </tr>
+            <tr>
+                <td>Request to recharge</td>
+                <td>POST</td>
+                <td>request/recharge</td>
+                <td>{recharge} = amount</td>
             </tr>
             <tr>
                 <td>Get User With Specific ID</td>
@@ -104,6 +116,12 @@
                 <td>POST</td>
                 <td>/api/v1/user/{user}/credits</td>
                 <td>{user} = User ID</td>
+            </tr>
+            <tr>
+                <td>Confirm Installation</td>
+                <td>POST</td>
+                <td>/api/v1/install/success</td>
+                <td>{package} = package of the installed app</td>
             </tr>
             </tbody>
         </table>

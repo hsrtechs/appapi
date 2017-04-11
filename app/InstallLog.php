@@ -16,4 +16,9 @@ class InstallLog extends Model
     {
         return $this->belongsTo('App\User');
     }
+
+    public function getTypeAttribute($value)
+    {
+        return $value ? 'Credit' : 'Debit';
+    }
 }

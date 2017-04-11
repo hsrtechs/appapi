@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\InstallLog;
 use App\Offer;
+use App\RechargeRequest;
 use App\User;
 use Exception;
 use Illuminate\Http\Request;
@@ -60,8 +62,7 @@ class AdminController extends Controller
 
             return redirect($request->path() . '?status=' . $status);
 
-        }catch (\Illuminate\Validation\ValidationException $e)
-        {
+        }catch (\Illuminate\Validation\ValidationException $e) {
             setInputs($request->all());
             setErrors($e->getResponse()->getContent());
         }
@@ -84,8 +85,7 @@ class AdminController extends Controller
     {
         $offer = Offer::findOrFail($id);
 
-        if($offer)
-        {
+        if($offer) {
             $offer->hidden = !$offer->hidden;
             $response = $offer->saveOrFail() ? 'true' : 'false';
         }else
@@ -109,6 +109,30 @@ class AdminController extends Controller
         $response = User::findOrFail($id)->delete() ? 'true' : 'false';
 
         return redirect(url('/list-users?status=' . $response));
+    }
+
+    public function listRecharge()
+    {
+        return view('listRecharge', status(['recharges' => RechargeRequest::all()]));
+    }
+
+    public function listOfferInstalls()
+    {
+        return view('listInstallLogs', status(['installs' => InstallLog::all()]));
+    }
+
+    public function approveRecharge($id)
+    {
+        $recharge = RechargeRequest::findOrFail($id);
+
+        if ($recharge && $recharge->approved === false) {
+            $recharge->approved = true;
+            $response = $recharge->saveOrFail() ? 'true' : 'false';
+        } else
+            $response = 'false';
+
+        return redirect(url('/list-recharge?status=' . $response));
+
     }
 
 }

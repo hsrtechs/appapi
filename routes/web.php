@@ -29,6 +29,12 @@ $app->get('list-apps',"AdminController@listOffers");
 
 $app->get('list-users', "AdminController@listUsers");
 
+$app->get('list-installs', "AdminController@listOfferInstalls");
+
+$app->get('/list-recharge', 'AdminController@listRecharge');
+
+$app->patch('/request/recharge/{id}/approve', 'AdminController@approveRecharge');
+
 $app->delete('/users/{id}/delete', "AdminController@deleteUser");
 
 $app->patch('/offers/{id}/switch-visibility',"AdminController@switchOfferVisibility");
@@ -46,13 +52,16 @@ $app->group([
 
     $app->post('user', 'APIController@getUserData');
 
+    $app->post('user/create', 'APIController@createUser');
+
     $app->post('user/credits','APIController@getUserCredits');
 
     $app->post('user/{user}', 'APIController@getUserData');
 
     $app->post('user/{user}/credits', 'APIController@getUserCredits');
 
-    $app->post('installs/success', 'APIController@offerInstallLogs');
+    $app->post('install/success', 'APIController@offerInstallLogs');
 
+    $app->post('request/recharge', 'APIController@requestRecharge');
 
 });
