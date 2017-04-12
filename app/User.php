@@ -29,7 +29,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'access_token','device_id', 'updated_at', 'created_at',
+        'access_token', 'device_id', 'updated_at', 'created_at', 'id',
     ];
 
     protected $casts = [
