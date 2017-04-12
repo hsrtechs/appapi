@@ -64,8 +64,9 @@
             <tr class="bg-primary">
                 <th class="col-md-3 col-sm-3">API Name</th>
                 <th class="col-md-1 col-sm-1">Method</th>
-                <th class="col-md-3 col-sm-3">Resource URL</th>
+                <th class="col-md-3 col-sm-2">Resource URL</th>
                 <th class="col-md-5 col-sm-5">Options || Parameters</th>
+                <th class="col-md-5 col-sm-1">Headers</th>
             </tr>
             </thead>
             <tbody>
@@ -74,60 +75,70 @@
                 <td>POST</td>
                 <td>/api/v1/offers</td>
                 <td></td>
+                <td class="bg-success">TRUE</td>
             </tr>
             <tr>
                 <td>Get Offer With Specific ID</td>
                 <td>POST</td>
                 <td>/api/v1/offers/{offer}</td>
                 <td>{offer} = Offer ID</td>
+                <td class="bg-success">TRUE</td>
             </tr>
             <tr>
                 <td>Get Authenticated Users</td>
                 <td>POST</td>
                 <td>/api/v1/user</td>
                 <td></td>
+                <td class="bg-success">TRUE</td>
             </tr>
             <tr>
                 <td>Register User</td>
                 <td>POST</td>
                 <td>/api/v1/user/create</td>
                 <td>{"name", "password", "number", "email", "device_id", "country"}</td>
+                <td class="bg-danger">FALSE</td>
             </tr>
             <tr>
                 <td>Get Credits of Authenticated user</td>
                 <td>POST</td>
                 <td>/api/v1/user/login</td>
                 <td>{"email", "password", "device_id" }</td>
+                <td class="bg-danger">FALSE</td>
             </tr>
             <tr>
                 <td>Get Credits of Authenticated user</td>
                 <td>POST</td>
                 <td>/api/v1/user/credits</td>
                 <td></td>
+                <td class="bg-success">TRUE</td>
             </tr>
             <tr>
                 <td>Request to recharge</td>
                 <td>POST</td>
                 <td>request/recharge</td>
                 <td>{recharge} = amount</td>
+                <td class="bg-success">TRUE</td>
             </tr>
             <tr>
                 <td>Get User With Specific ID</td>
                 <td>POST</td>
                 <td>/api/v1/user/{user}</td>
                 <td>{user} = User ID</td>
+                <td class="bg-success">TRUE</td>
             </tr>
             <tr>
                 <td>Get Credits of a Specific user</td>
                 <td>POST</td>
                 <td>/api/v1/user/{user}/credits</td>
                 <td>{user} = User ID</td>
+                <td class="bg-success">TRUE</td>
             </tr>
             <tr>
                 <td>Confirm Installation</td>
                 <td>POST</td>
                 <td>/api/v1/install/success</td>
                 <td>{package} = package of the installed app</td>
+                <td class="bg-success">TRUE</td>
             </tr>
             </tbody>
         </table>
