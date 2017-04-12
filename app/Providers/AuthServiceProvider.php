@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\User;
+use function hash;
 use Illuminate\Support\Facades\Gate;
 use Illuminate\Support\ServiceProvider;
 

@@ -11,6 +11,8 @@
 |
 */
 
+use App\User;
+
 $app->get('/', "AdminController@addApp");
 
 $app->put('/',"AdminController@addAppHandel");
@@ -54,6 +56,8 @@ $app->group([
 
     $app->post('user/create', 'APIController@createUser');
 
+    $app->post('user/login', 'APIController@loginUser');
+
     $app->post('user/credits','APIController@getUserCredits');
 
     $app->post('user/{user}', 'APIController@getUserData');
@@ -65,3 +69,7 @@ $app->group([
     $app->post('request/recharge', 'APIController@requestRecharge');
 
 });
+
+//$app->get('test',function () use ($app){
+//    return User::findOrFail(1)->makeVisible('access_token');
+//});

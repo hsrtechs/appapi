@@ -9,8 +9,11 @@ use App\RechargeRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Mail;
 use function is_integer;
 use function json_decode;
+use function loggedAdmin;
+use function password_verify;
 use function str_random;
 use const true;
 
@@ -25,7 +28,7 @@ class APIController extends Controller
     public function __construct()
     {
         $this->middleware('api');
-        $this->middleware('auth', ['except' => ['createUser']]);
+        $this->middleware('auth', ['except' => ['createUser', 'loginUser']]);
     }
 
     public function getOffers(int $offer = NULL)
@@ -82,18 +85,18 @@ class APIController extends Controller
     {
         try {
             $this->validate($request, [
-                'first_name' => 'required|string|min:3|max:50',
-                'last_name' => 'required|string|min:3|max:50',
-                'number' => 'required|numeric|min:0',
+                'name' => 'required|string',
+                'password' => 'required|string|min:8',
+                'number' => 'required|numeric|min:10|unique:users',
                 'email' => 'required|email|unique:users',
                 'country' => 'required|string',
-                'device_id' => 'required|min:16|max:20',
+                'device_id' => 'required|min:10|max:20|unique:users',
             ]);
 
 
             $user = new User;
-            $user->firstname = $request->input('first_name');
-            $user->lastname = $request->input('last_name');
+            $user->name = $request->input('name');
+            $user->password = $request->input('password');
             $user->number = $request->input('number');
             $user->email = $request->input('email');
             $user->country = $request->input('country');
@@ -101,7 +104,7 @@ class APIController extends Controller
             $user->access_token = str_random(64);
 
             if ($user->saveOrFail())
-                return APIResponse("CreateUser", ['user' => $user]);
+                return APIResponse("CreateUser", ['user' => $user->makeVisible('access_token')]);
             else
                 return APIError("CreateUser", ['error' => 'Failed for some reason']);
 
@@ -140,8 +143,6 @@ class APIController extends Controller
 
     }
 
-    //TODO Request Recharge
-
     public function requestRecharge(Request $request)
     {
 
@@ -153,7 +154,7 @@ class APIController extends Controller
 
 
             $user = Auth::user();
-            $recharge = $request->input('recharge');
+            $recharge = (int)$request->input('recharge');
             $number = $request->input('number');
 
             if ($user->credits < $recharge)
@@ -170,7 +171,37 @@ class APIController extends Controller
             else
                 return APIError("RequestRecharge", ['error' => 'Failed for some reason']);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return APIError('CreateUser', json_decode($e->getResponse()->getContent(), true));
+            return APIError('RequestRecharge', json_decode($e->getResponse()->getContent(), true));
+        }
+    }
+
+    public function loginUser(Request $request)
+    {
+        try {
+            $this->validate($request, [
+                'email' => 'required|email|exists:users',
+                'password' => 'required|string|min:8',
+                'device_id' => 'required|min:10|max:20',
+            ]);
+
+            $user = User::where('email', $request->input('email'))->first();
+
+            if (!password_verify($request->input('password'), $user->password))
+                return APIError("LoginRequest", ['error' => 'Invalid Password.']);
+
+            if (!$user->verified)
+                return APIError("LoginRequest", ['error' => 'User is not Verified.']);
+
+
+            if ($user->updateAccessToken() && $user->updateDeviceId($request->input('device_id')))
+                return APIResponse("LoginRequest", ['user' => $user->makeVisible('access_token')]);
+            else
+                return APIError("LoginRequest", ['error' => 'Failed for some reason']);
+
+        } catch (\Illuminate\Validation\ValidationException $e) {
+
+            return APIError('LoginRequest', json_decode($e->getResponse()->getContent(), true));
+
         }
     }
 

@@ -2,11 +2,16 @@
 
 namespace App;
 
+use function bcrypt;
+use function encrypt;
+use function hash;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use function str_random;
+use function strtolower;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -20,7 +25,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'firstname', 'lastname', 'email', 'number', 'country', 'credits', 'device_id', 'access_token'
+        'name', 'email', 'number', 'country', 'credits', 'device_id', 'access_token'
     ];
 
     /**
@@ -37,16 +42,10 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         'verified' => 'boolean',
     ];
 
-    protected $appends = ['name'];
 
     public function isVerified() : boolean
     {
         return $this->verified == true;
-    }
-
-    public function getNameAttribute()
-    {
-        return $this->firstname . ' ' . $this->lastname;
     }
 
     public function addCredits(float $credits)
@@ -61,8 +60,47 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->saveOrFail();
     }
 
+    public function updateAccessToken()
+    {
+        $this->access_token = str_random(64);
+        return $this->saveOrFail();
+    }
+
+    public function updateDeviceId($value)
+    {
+        $this->device_id = $value;
+        return $this->saveOrFail();
+    }
+
     public function installLogs()
     {
         return $this->hasMany('App\InstallLog');
     }
+
+    public function setPasswordAttribute($value)
+    {
+        $this->attributes['password'] = bcrypt($value);
+    }
+
+    public function setAccessTokenAttribute($value)
+    {
+        $this->attributes['access_token'] = encrypt($value);
+    }
+
+    public function getAccessTokenAttribute($value)
+    {
+        return decrypt($value);
+    }
+
+    public function setDeviceIdAttribute($value)
+    {
+        $this->attributes['device_id'] = encrypt($value);
+    }
+
+
+    public function getDeviceIdAttribute($value)
+    {
+        return decrypt($value);
+    }
+
 }

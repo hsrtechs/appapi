@@ -15,8 +15,8 @@ use Carbon\Carbon;
 
 $factory->define(App\User::class, function (Faker\Generator $faker) {
     return [
-        'firstname' => $faker->firstName,
-        'lastname' => $faker->lastName,
+        'name' => $faker->name,
+        'password' => 'jainjain',
         'number' => $faker->numberBetween(),
         'email' => $faker->email,
         'country' => $faker->country,

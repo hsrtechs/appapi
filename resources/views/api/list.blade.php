@@ -91,7 +91,13 @@
                 <td>Register User</td>
                 <td>POST</td>
                 <td>/api/v1/user/create</td>
-                <td>{"first_name", "last_name", "number", "email", "device_id", "country"}</td>
+                <td>{"name", "password", "number", "email", "device_id", "country"}</td>
+            </tr>
+            <tr>
+                <td>Get Credits of Authenticated user</td>
+                <td>POST</td>
+                <td>/api/v1/user/login</td>
+                <td>{"email", "password", "device_id" }</td>
             </tr>
             <tr>
                 <td>Get Credits of Authenticated user</td>
