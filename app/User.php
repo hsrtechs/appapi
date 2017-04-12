@@ -84,12 +84,12 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function setAccessTokenAttribute($value)
     {
-        $this->attributes['access_token'] = encrypt($value);
+        $this->attributes['access_token'] = ($value);
     }
 
     public function getAccessTokenAttribute($value)
     {
-        return decrypt($value);
+        return ($value);
     }
 
     public function setDeviceIdAttribute($value)
