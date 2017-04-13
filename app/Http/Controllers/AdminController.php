@@ -57,6 +57,7 @@ class AdminController extends Controller
             $offer->country = $request->input('country');
             $offer->image_location = $request->input('img');
             $offer->valid_until = $request->input('valid');
+            $offer->desc = $request->input('desc', '');
 
             $status = $offer->saveOrFail() ? 'true' : 'false';
 
