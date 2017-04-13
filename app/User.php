@@ -3,15 +3,12 @@
 namespace App;
 
 use function bcrypt;
-use function encrypt;
-use function hash;
 use Illuminate\Auth\Authenticatable;
 use Laravel\Lumen\Auth\Authorizable;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use function str_random;
-use function strtolower;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -101,6 +98,18 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getDeviceIdAttribute($value)
     {
         return ($value);
+    }
+
+    public function changePassword($password)
+    {
+        $this->password = $password;
+        return $this->saveOrFail();
+    }
+
+    public function toggleVerified()
+    {
+        $this->verified = !$this->verified;
+        return $this->saveOrFail();
     }
 
 }
