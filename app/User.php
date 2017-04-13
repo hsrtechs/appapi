@@ -100,7 +100,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function getDeviceIdAttribute($value)
     {
-        return decrypt($value);
+        return ($value);
     }
 
 }
