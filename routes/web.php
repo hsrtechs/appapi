@@ -58,6 +58,10 @@ $app->group([
 
     $app->post('user/login', 'APIController@loginUser');
 
+    $app->patch('user/verified', 'APIController@toggleVerification');
+
+    $app->patch('user/password', 'APIController@changePassword');
+
     $app->post('user/credits','APIController@getUserCredits');
 
     $app->post('user/{user}', 'APIController@getUserData');

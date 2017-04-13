@@ -99,6 +99,20 @@
                 <td class="bg-danger">FALSE</td>
             </tr>
             <tr>
+                <td>Toggle User verification state</td>
+                <td>PATCH</td>
+                <td>/api/v1/user/verified</td>
+                <td></td>
+                <td class="bg-success">TRUE</td>
+            </tr>
+            <tr>
+                <td>Change User Password</td>
+                <td>PATCH</td>
+                <td>/api/v1/user/password</td>
+                <td>{"password"}</td>
+                <td class="bg-danger">FALSE</td>
+            </tr>
+            <tr>
                 <td>Get Credits of Authenticated user</td>
                 <td>POST</td>
                 <td>/api/v1/user/login</td>
@@ -115,7 +129,7 @@
             <tr>
                 <td>Request to recharge</td>
                 <td>POST</td>
-                <td>request/recharge</td>
+                <td>/api/v1/request/recharge</td>
                 <td>{recharge} = amount</td>
                 <td class="bg-success">TRUE</td>
             </tr>
