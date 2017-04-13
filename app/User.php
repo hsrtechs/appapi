@@ -94,7 +94,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function setDeviceIdAttribute($value)
     {
-        $this->attributes['device_id'] = encrypt($value);
+        $this->attributes['device_id'] = ($value);
     }
 
 
