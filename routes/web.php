@@ -68,9 +68,11 @@ $app->group([
 
     $app->post('user/{user}/credits', 'APIController@getUserCredits');
 
-    $app->post('install/success', 'APIController@offerInstallLogs');
+    $app->post('/app/installed', 'APIController@offerInstalled');
 
-    $app->post('request/recharge', 'APIController@requestRecharge');
+    $app->post('/app/install/success', 'APIController@offerInstallLogs');
+
+    $app->post('/request/recharge', 'APIController@requestRecharge');
 
 });
 

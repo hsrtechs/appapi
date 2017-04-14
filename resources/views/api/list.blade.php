@@ -113,7 +113,7 @@
                 <td class="bg-danger">FALSE</td>
             </tr>
             <tr>
-                <td>Get Credits of Authenticated user</td>
+                <td>Authenticate user</td>
                 <td>POST</td>
                 <td>/api/v1/user/login</td>
                 <td>{"email", "password", "device_id" }</td>
@@ -148,9 +148,16 @@
                 <td class="bg-success">TRUE</td>
             </tr>
             <tr>
+                <td>Get availed offers</td>
+                <td>POST</td>
+                <td>/api/v1/app/installed</td>
+                <td></td>
+                <td class="bg-success">TRUE</td>
+            </tr>
+            <tr>
                 <td>Confirm Installation</td>
                 <td>POST</td>
-                <td>/api/v1/install/success</td>
+                <td>/api/v1/app/install/success</td>
                 <td>{package} = package of the installed app</td>
                 <td class="bg-success">TRUE</td>
             </tr>

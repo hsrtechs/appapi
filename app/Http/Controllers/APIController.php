@@ -120,6 +120,18 @@ class APIController extends Controller
         }
     }
 
+    public function offerInstalled()
+    {
+        $requestType = 'InstalledOffers';
+        $user = Auth::user();
+        $logs = InstallLog::where('user_id', $user->id)->select('package', 'device_id', 'created_at as installed_on')->get()->toArray();
+        if (true)
+            return APIResponse($requestType, ['installed' => $logs]);
+        else
+            return APIError($requestType, ['error' => 'Failed for some reason']);
+
+    }
+
     public function offerInstallLogs(Request $request)
     {
 

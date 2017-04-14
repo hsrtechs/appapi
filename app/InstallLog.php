@@ -10,7 +10,12 @@ class InstallLog extends Model
 {
 
     public $timestamps = true;
+
     protected $table = 'install_logs';
+
+    protected $hidden = [
+        'id', 'type'
+    ];
 
     public function user()
     {
