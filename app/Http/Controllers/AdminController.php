@@ -6,17 +6,11 @@ use App\InstallLog;
 use App\Offer;
 use App\RechargeRequest;
 use App\User;
-use Exception;
 use Illuminate\Http\Request;
-use function json_encode;
 use function redirect;
-use function session_abort;
-use function session_status;
 use function setInputs;
 use function status;
-use function var_dump;
 use function view;
-use function with;
 
 class AdminController extends Controller
 {
@@ -45,7 +39,7 @@ class AdminController extends Controller
                 'credits' => 'required|numeric|min:0',
                 'country' => 'required|string',
                 'img' => 'required|url',
-                'valid' => 'required|date',
+                'valid' => 'required|date|after_or_equal:tomorrow',
                 'desc' => 'string|min:20'
             ]);
 
