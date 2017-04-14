@@ -40,14 +40,15 @@
                         <input class="form-control" name="img" type="text" placeholder="Image Url" value="{{ getInput('img') }}"/>
                     </div>
                     <div class="form-group">
-                        <textarea class="form-control" name="img"
+                        <textarea class="form-control" name="desc"
                                   placeholder="App Description">{{ getInput('desc') }}</textarea>
                     </div>
                     <div class="form-group">
-                        <input class="form-control" placeholder="Validity" name="valid" type="date"/>
+                        <input class="form-control" placeholder="Validity" value="{{ getInput('valid') }}" name="valid"
+                               type="date"/>
                     </div>
                     <div class="form-group">
-                        <input class="form-control btn btn-primary" name="package" type="submit"/>
+                        <input class="form-control btn btn-primary" type="submit"/>
                     </div>
                 </form>
             </div>

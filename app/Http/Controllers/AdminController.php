@@ -46,6 +46,7 @@ class AdminController extends Controller
                 'country' => 'required|string',
                 'img' => 'required|url',
                 'valid' => 'required|date',
+                'desc' => 'string|min:20'
             ]);
 
 
@@ -66,6 +67,7 @@ class AdminController extends Controller
         }catch (\Illuminate\Validation\ValidationException $e) {
             setInputs($request->all());
             setErrors($e->getResponse()->getContent());
+            return redirect($request->path() . '?status=false');
         }
     }
 
