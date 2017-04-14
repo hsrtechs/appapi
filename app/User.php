@@ -9,6 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use function str_random;
+use function strtolower;
+use function ucfirst;
 
 class User extends Model implements AuthenticatableContract, AuthorizableContract
 {
@@ -82,6 +84,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function setAccessTokenAttribute($value)
     {
         $this->attributes['access_token'] = ($value);
+    }
+
+    public function setCountryAttribute($value)
+    {
+        $this->attributes['country'] = strtolower($value);
+    }
+
+    public function getCountryAttribute($value)
+    {
+        return ucfirst($value);
     }
 
     public function getAccessTokenAttribute($value)

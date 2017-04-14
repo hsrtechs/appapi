@@ -9,9 +9,8 @@ use Illuminate\Database\Eloquent\Model;
 class Offer extends Model
 {
 
-    protected $table = 'offers';
-
     public $timestamps = true;
+    protected $table = 'offers';
     /**
      * The attributes that are mass assignable.
      *
@@ -50,6 +49,17 @@ class Offer extends Model
     public function getValidityAttribute()
     {
         return $this->valid_until;
+    }
+
+
+    public function setCountryAttribute($value)
+    {
+        $this->attributes['country'] = strtolower($value);
+    }
+
+    public function getCountryAttribute($value)
+    {
+        return ucfirst($value);
     }
 
     public function getPackageAttribute()
