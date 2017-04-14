@@ -41,9 +41,13 @@ class Offer extends Model
         'validity', 'hidden', 'created_at', 'updated_at', 'valid_until',
     ];
 
-    public function scopeActive($query)
+    public function scopeActive($query, $country = NULL)
     {
-        return $query->where('hidden',false)->whereDate('valid_until', '>=', Carbon::now());
+        if ($country === NULL)
+            return $query->where('hidden', false)->whereDate('valid_until', '>=', Carbon::now());
+        else
+            return $query->where('hidden', false)->whereDate('valid_until', '>=', Carbon::now())->where('country', $country);
+
     }
 
     public function getValidityAttribute()
