@@ -9,6 +9,7 @@ use App\RechargeRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Mail;
 use function is_integer;
 use function json_decode;
@@ -124,7 +125,10 @@ class APIController extends Controller
     {
         $requestType = 'InstalledOffers';
         $user = Auth::user();
-        $logs = InstallLog::where('user_id', $user->id)->select('package', 'device_id', 'created_at as installed_on')->get()->toArray();
+        $logs = DB::table('install_logs')->join('offers', 'install_logs.package', '=', 'offers.package_id')
+            ->where('install_logs.user_id', $user->id)
+            ->select('install_logs.package', 'install_logs.device_id', 'install_logs.created_at as installed_on', 'offers.name', 'offers.credits', 'offers.image_location')
+            ->get()->toArray();
         if (true)
             return APIResponse($requestType, ['installed' => $logs]);
         else
