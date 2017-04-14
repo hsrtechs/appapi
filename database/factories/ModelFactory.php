@@ -22,7 +22,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'country' => $faker->country,
         'credits' => $faker->numberBetween(0,500),
         'device_id' => str_random(),
-        'access_token' => str_random(32),
+        'access_token' => str_random(),
         'verified' => $faker->boolean(),
     ];
 });
