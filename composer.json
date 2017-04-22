@@ -1,7 +1,11 @@
 {
-    "name": "laravel/lumen",
-    "description": "The Laravel Lumen Framework.",
-    "keywords": ["framework", "laravel", "lumen"],
+    "name": "MobCash",
+    "description": "Backend API for a mobile recharge app.",
+    "keywords": [
+        "recharge",
+        "mobcash",
+        "mobile"
+    ],
     "license": "MIT",
     "type": "project",
     "require": {
