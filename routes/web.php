@@ -64,13 +64,15 @@ $app->group([
 
     $app->post('user/credits','APIController@getUserCredits');
 
+    $app->post('user/credit/logs', 'APIController@creditLogs');
+
     $app->post('user/{user}', 'APIController@getUserData');
 
     $app->post('user/{user}/credits', 'APIController@getUserCredits');
 
-    $app->post('/app/installed', 'APIController@offerInstalled');
+    $app->post('/app/installed', 'APIController@offerInstallLogs');
 
-    $app->post('/app/install/success', 'APIController@offerInstallLogs');
+    $app->post('/app/install/success', 'APIController@offerInstall');
 
     $app->post('/request/recharge', 'APIController@requestRecharge');
 

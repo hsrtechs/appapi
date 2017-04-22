@@ -130,7 +130,7 @@
                 <td>Request to recharge</td>
                 <td>POST</td>
                 <td>/api/v1/request/recharge</td>
-                <td>{recharge} = amount</td>
+                <td>{recharge, provider}</td>
                 <td class="bg-success">TRUE</td>
             </tr>
             <tr>
@@ -138,6 +138,13 @@
                 <td>POST</td>
                 <td>/api/v1/user/{user}</td>
                 <td>{user} = User ID</td>
+                <td class="bg-success">TRUE</td>
+            </tr>
+            <tr>
+                <td>Get User Credit Logs</td>
+                <td>POST</td>
+                <td>/api/v1/user/credit/log</td>
+                <td></td>
                 <td class="bg-success">TRUE</td>
             </tr>
             <tr>
