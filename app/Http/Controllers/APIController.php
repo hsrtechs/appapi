@@ -45,7 +45,7 @@ class APIController extends Controller
         if (!empty($json))
             return APIResponse($requestType, ['offers' => $json]);
         else
-            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 500);
+            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 404);
 
     }
 
@@ -55,15 +55,14 @@ class APIController extends Controller
         if (!empty($id) && is_integer($id)) {
             $user = User::where('id', $id)->first();
         } else if (Auth::check()) {
-            $user = User::findOrFail(Auth::user()->id)->with('installLogs', 'creditLogs')->first();
+            $user = User::findOrFail(Auth::user()->id);
         } else {
             $user = NULL;
         }
-        $user = Auth::user()->creditLogs;
         if (!empty($user))
-            return APIResponse($requestType, ['user' => $user]);
+            return APIResponse($requestType, ['user' => $user->toArray()]);
         else
-            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.']);
+            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 404);
     }
 
     public function getUserCredits(int $user = NULL)
@@ -73,15 +72,15 @@ class APIController extends Controller
             $credits = User::where('id', $user)->first()->credits ?? NULL;
         } else {
             if (Auth::check())
-                $credits = Auth::user()->credits;
+                $credits = (float)Auth::user()->credits;
             else
                 $credits = NULL;
         }
 
-        if ($credits)
+        if (!is_null($credits))
             return APIResponse($requestType, ['credits' => $credits]);
         else
-            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.']);
+            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 404);
     }
 
     public function createUser(Request $request)
@@ -95,6 +94,7 @@ class APIController extends Controller
                 'email' => 'required|email|unique:users',
                 'country' => 'required|string',
                 'device_id' => 'required|min:10|max:20|unique:users',
+                'referral_token' => 'string|min:6|exists:users'
             ]);
 
 
@@ -106,14 +106,19 @@ class APIController extends Controller
             $user->country = $request->input('country');
             $user->device_id = $request->input('device_id');
             $user->access_token = str_random(64);
+            $user->referral_token = str_random(6);
 
-            if ($user->saveOrFail())
-                return APIResponse($requestType, ['user' => $user->makeVisible('access_token')]);
+            if ($user->saveOrFail()) {
+                if ($request->has('referral_token')) {
+                    $user->setReferral($request->input('referral_token'));
+                }
+                return APIResponse($requestType, ['user' => $user->makeVisible('access_token')->toArray()]);
+            }
             else
                 return APIError($requestType, ['error' => 'Failed for some reason']);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return APIError($requestType, json_decode($e->getResponse()->getContent(), true));
+            return APIError($requestType, json_decode($e->getResponse()->getContent(), true), 422);
         }
     }
 
@@ -170,12 +175,12 @@ class APIController extends Controller
             $t->log_line = 'Credits added for package: ' . $package . '.';
 
             if ($log->saveOrFail() && $t->saveOrFail() && $user->addCredits($credits))
-                return APIResponse($requestType, ['user' => $user]);
+                return APIResponse($requestType, ['user' => $user->toArray()]);
             else
                 return APIError($requestType, ['error' => 'Failed for some reason']);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return APIError($requestType, json_decode($e->getResponse()->getContent(), true));
+            return APIError($requestType, json_decode($e->getResponse()->getContent(), true), 422);
         }
     }
 
@@ -186,7 +191,7 @@ class APIController extends Controller
         try {
             $this->validate($request, [
                 'recharge' => 'required|integer|min:10',
-                'number' => 'required|number|min:10',
+                'number' => 'required|integer|digits_between:7,12',
                 'provider' => 'required|string'
             ]);
 
@@ -213,11 +218,11 @@ class APIController extends Controller
             $t->log_line = 'Recharge on Number: ' . $recharge . ' Provider: ' . $provider . '.';
 
             if ($temp->saveOrFail() && $t->saveOrFail() && $user->deductCredits($recharge))
-                return APIResponse($requestType, ['user' => $user]);
+                return APIResponse($requestType, ['user' => $user->toArray()]);
             else
                 return APIError($requestType, ['error' => 'Failed for some reason']);
         } catch (\Illuminate\Validation\ValidationException $e) {
-            return APIError($requestType, json_decode($e->getResponse()->getContent(), true));
+            return APIError($requestType, json_decode($e->getResponse()->getContent(), true), 422);
         }
     }
 
@@ -237,17 +242,21 @@ class APIController extends Controller
                 return APIError($requestType, ['error' => 'Invalid Password.']);
 
             if (!$user->verified)
-                return APIError($requestType, ['error' => 'User is not Verified.']);
+                return APIError($requestType, ['error' => 'User is not Verified.'], 401);
 
+            $temp = User::where('device_id', $request->input('device_id'))->first();
+
+            if (empty($temp) || $temp->id != $user->id)
+                return APIError($requestType, ['error' => 'Device already registered with another ID.'], 401);
 
             if ($user->updateAccessToken() && $user->updateDeviceId($request->input('device_id')))
-                return APIResponse($requestType, ['user' => $user->makeVisible('access_token')]);
+                return APIResponse($requestType, ['user' => $user->makeVisible('access_token')->toArray()]);
             else
                 return APIError($requestType, ['error' => 'Failed for some reason']);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
 
-            return APIError($requestType, json_decode($e->getResponse()->getContent(), true));
+            return APIError($requestType, json_decode($e->getResponse()->getContent(), true), 422);
 
         }
     }
@@ -262,14 +271,17 @@ class APIController extends Controller
 
             $user = Auth::user();
 
+            if (!$user->verified)
+                return APIError($requestType, ['error' => 'User is not Verified.'], 401);
+
             if ($user->changePassword($request->input('password')))
-                return APIResponse($requestType, ['user' => $user]);
+                return APIResponse($requestType, ['user' => $user->toArray()]);
             else
                 return APIError($requestType, ['error' => 'Failed for some reason']);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
 
-            return APIError($requestType, json_decode($e->getResponse()->getContent(), true));
+            return APIError($requestType, json_decode($e->getResponse()->getContent(), true), 422);
 
         }
 
@@ -282,13 +294,13 @@ class APIController extends Controller
             $user = Auth::user();
 
             if ($user->toggleVerified())
-                return APIResponse($requestType, ['user' => $user]);
+                return APIResponse($requestType, ['user' => $user->toArray()]);
             else
                 return APIError($requestType, ['error' => 'Failed for some reason']);
 
         } catch (\Illuminate\Validation\ValidationException $e) {
 
-            return APIError($requestType, json_decode($e->getResponse()->getContent(), true));
+            return APIError($requestType, json_decode($e->getResponse()->getContent(), true), 422);
 
         }
 
@@ -300,7 +312,7 @@ class APIController extends Controller
 
         $user = Auth::user();
 
-        return APIResponse($requestType, ['logs' => $user->creditLogs]);
+        return APIResponse($requestType, ['logs' => $user->creditLogs->toArray()]);
 
     }
 

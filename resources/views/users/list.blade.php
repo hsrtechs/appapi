@@ -21,6 +21,7 @@
                 <th>Email</th>
                 <th>Device ID</th>
                 <th>API Key</th>
+                <th>Referral Token</th>
                 <th>Action</th>
             </tr>
             </thead>
@@ -34,6 +35,7 @@
                     <td>{{ $user->email }}</td>
                     <td>{{ $user->device_id }}</td>
                     <td>{{ $user->access_token }}</td>
+                    <td>{{ $user->referral_token }}</td>
                     <td>
                         <form method="post" action="/users/{{ $user->id }}/delete">
                             <input type="hidden" name="_method" value="delete"/>

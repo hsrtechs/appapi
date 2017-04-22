@@ -2,12 +2,12 @@
 
 namespace App;
 
-use function bcrypt;
 use Illuminate\Auth\Authenticatable;
-use Laravel\Lumen\Auth\Authorizable;
-use Illuminate\Database\Eloquent\Model;
-use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
+use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
+use Illuminate\Database\Eloquent\Model;
+use Laravel\Lumen\Auth\Authorizable;
+use function bcrypt;
 use function str_random;
 use function strtolower;
 use function ucfirst;
@@ -24,7 +24,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $fillable = [
-        'name', 'email', 'number', 'country', 'credits', 'device_id', 'access_token'
+        'name', 'email', 'number', 'country', 'credits', 'device_id', 'access_token', 'referral_token'
     ];
 
     /**
@@ -33,12 +33,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'access_token', 'device_id', 'updated_at', 'created_at', 'id',
+        'access_token', 'device_id', 'updated_at', 'created_at', 'id', 'password', 'user_id'
     ];
 
     protected $casts = [
         'credits' => 'float',
         'verified' => 'boolean',
+    ];
+
+    protected $appends = [
+        'ref'
     ];
 
 
@@ -47,15 +51,22 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->verified == true;
     }
 
-    public function addCredits(float $credits)
-    {
-        $this->credits += $credits;
-        return $this->saveOrFail();
-    }
-
     public function deductCredits(float $credits)
     {
         $this->credits -= $credits;
+        return $this->saveOrFail();
+    }
+
+    public function setReferral($code)
+    {
+        $id = self::where('referral_token', $code)->pluck('id')->first();
+        $this->user_id = $id;
+        return $this->addCredits(5);
+    }
+
+    public function addCredits(float $credits)
+    {
+        $this->credits += $credits;
         return $this->saveOrFail();
     }
 
@@ -69,6 +80,16 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     {
         $this->device_id = $value;
         return $this->saveOrFail();
+    }
+
+    public function referralBy()
+    {
+        return $this->belongsTo('App\User', 'user_id', 'id');
+    }
+
+    public function referral()
+    {
+        return $this->hasMany('App\User', 'id', 'user_id');
     }
 
     public function installLogs()
@@ -115,6 +136,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function getDeviceIdAttribute($value)
     {
         return ($value);
+    }
+
+    public function getRefAttribute()
+    {
+        return self::where('id', $this->user_id)->pluck('name')->first();
     }
 
     public function changePassword($password)

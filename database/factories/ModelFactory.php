@@ -24,6 +24,7 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'device_id' => str_random(20),
         'access_token' => str_random(64),
         'verified' => $faker->boolean(),
+        'referral_token' => str_random(6),
     ];
 });
 
