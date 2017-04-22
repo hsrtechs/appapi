@@ -76,6 +76,11 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         return $this->hasMany('App\InstallLog');
     }
 
+    public function creditLogs()
+    {
+        return $this->hasMany('App\CreditLog');
+    }
+
     public function setPasswordAttribute($value)
     {
         $this->attributes['password'] = bcrypt($value);

@@ -14,7 +14,7 @@ class InstallLog extends Model
     protected $table = 'install_logs';
 
     protected $hidden = [
-        'id', 'type'
+        'id', 'type', 'created_at', 'updated_at', 'user_id'
     ];
 
     public function user()

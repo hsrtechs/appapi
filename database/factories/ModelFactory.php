@@ -21,8 +21,8 @@ $factory->define(App\User::class, function (Faker\Generator $faker) {
         'email' => $faker->email,
         'country' => $faker->country,
         'credits' => $faker->numberBetween(0,500),
-        'device_id' => str_random(),
-        'access_token' => str_random(),
+        'device_id' => str_random(20),
+        'access_token' => str_random(64),
         'verified' => $faker->boolean(),
     ];
 });
