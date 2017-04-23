@@ -6,8 +6,10 @@ use Illuminate\Auth\Authenticatable;
 use Illuminate\Contracts\Auth\Access\Authorizable as AuthorizableContract;
 use Illuminate\Contracts\Auth\Authenticatable as AuthenticatableContract;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Request;
 use Laravel\Lumen\Auth\Authorizable;
 use function bcrypt;
+use function getReferralCredits;
 use function str_random;
 use function strtolower;
 use function ucfirst;
@@ -59,15 +61,41 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function setReferral($code)
     {
-        $id = self::where('referral_token', $code)->pluck('id')->first();
-        $this->user_id = $id;
-        return $this->addCredits(5);
+        $credits = getReferralCredits();
+
+        $user = self::where('referral_token', $code)->first();
+        $user->addReferralCredits($this->name);
+
+        $t = new CreditLog;
+        $t->user_id = $this->id;
+        $t->value = $credits;
+        $t->ip = Request::ip();
+        $t->log_line = 'Credits added for referral by: ' . $user->name . '.';
+        $t->saveOrFail();
+
+        return $this->addCredits($credits);
     }
 
     public function addCredits(float $credits)
     {
         $this->credits += $credits;
         return $this->saveOrFail();
+    }
+
+    public function addReferralCredits($user)
+    {
+        $credits = getReferralCredits();
+
+        $t = new CreditLog;
+        $t->user_id = $this->id;
+        $t->value = $credits;
+        $t->ip = Request::ip();
+        $t->log_line = 'Credits added for referral to: ' . $user . '.';
+        $t->saveOrFail();
+
+        $this->addCredits($credits);
+
+        $this->saveOrFail();
     }
 
     public function updateAccessToken()

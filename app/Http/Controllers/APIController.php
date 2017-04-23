@@ -90,7 +90,7 @@ class APIController extends Controller
             $this->validate($request, [
                 'name' => 'required|string',
                 'password' => 'required|string|min:8',
-                'number' => 'required|numeric|min:10|unique:users',
+                'number' => 'required|numeric|unique:users|digits_between:7,12',
                 'email' => 'required|email|unique:users',
                 'country' => 'required|string',
                 'device_id' => 'required|min:10|max:20|unique:users',
@@ -130,10 +130,9 @@ class APIController extends Controller
             ->where('install_logs.user_id', $user->id)
             ->select('install_logs.package', 'install_logs.device_id', 'install_logs.created_at as installed_on', 'offers.name', 'offers.credits', 'offers.image_location')
             ->get()->toArray();
-        if (!empty($logs))
-            return APIResponse($requestType, ['installed' => $logs]);
-        else
-            return APIError($requestType, ['error' => 'Failed for some reason']);
+
+
+        return APIResponse($requestType, ['installed' => $logs]);
 
     }
 
@@ -164,6 +163,7 @@ class APIController extends Controller
             $log->credits = $credits;
             $log->user_id = $user->id;
             $log->device_id = $user->device_id;
+
 
             $t = new CreditLog;
             $t->user_id = $user->id;

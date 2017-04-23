@@ -176,3 +176,11 @@ if(! function_exists('status'))
         return $input;
     }
 }
+
+if (!function_exists('getReferralCredits')) {
+    function getReferralCredits(): float
+    {
+        $c = env('REF_CREDITS', 5);
+        return is_numeric($c) ? floatval($c) : 0;
+    }
+}
