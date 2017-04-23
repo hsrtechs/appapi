@@ -1,18 +1,5 @@
 <?php
 
-/*
-|--------------------------------------------------------------------------
-| Application Routes
-|--------------------------------------------------------------------------
-|
-| Here is where you can register all of the routes for an application.
-| It is a breeze. Simply tell Lumen the URIs it should respond to
-| and give it the Closure to call when that URI is requested.
-|
-*/
-
-use App\User;
-
 $app->get('/', "AdminController@addApp");
 
 $app->put('/',"AdminController@addAppHandel");
@@ -44,6 +31,11 @@ $app->patch('/offers/{id}/switch-visibility',"AdminController@switchOfferVisibil
 $app->delete('/offers/{id}/delete',"AdminController@deleteOffer");
 
 $app->get('/api/list',"AdminController@listAPI");
+
+$app->get('/redirect/referral/{code}', function ($code) {
+    $url = "https://play.google.com/store/apps/details?id=net.hsrtech.amihacked&referrer=utm_source=referral&utm_content=" . $code;
+    return redirect()->to($url);
+});
 
 $app->group([
     'prefix' => '/api/v1/'

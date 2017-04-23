@@ -145,15 +145,12 @@ class APIController extends Controller
         try {
 
             $this->validate($request, [
-                'package' => 'required|string'
+                'package_id' => 'required|string|exists:offers'
             ]);
-
-            if (!$request->has('package'))
-                return APIError($requestType, ["Invalid id" => "The pre-requisite id is invalid or not found."]);
 
             $user = Auth::user();
 
-            $package = $request->input('package');
+            $package = $request->input('package_id');
 
             if (InstallLog::where('user_id', $user->id)->where('package', $package)->count())
                 return APIError($requestType, ["Already availed" => "The offer is already availed."]);
@@ -172,7 +169,7 @@ class APIController extends Controller
             $t->user_id = $user->id;
             $t->value = $credits;
             $t->ip = $request->ip();
-            $t->log_line = 'Credits added for package: ' . $package . '.';
+            $t->log_line = 'Credits added for app: ' . $offer->name . '.';
 
             if ($log->saveOrFail() && $t->saveOrFail() && $user->addCredits($credits))
                 return APIResponse($requestType, ['user' => $user->toArray()]);
@@ -215,7 +212,7 @@ class APIController extends Controller
             $t->credited = false;
             $t->value = $recharge;
             $t->ip = $request->ip();
-            $t->log_line = 'Recharge on Number: ' . $recharge . ' Provider: ' . $provider . '.';
+            $t->log_line = 'Recharge on Number: ' . $number . ' Provider: ' . $provider . '.';
 
             if ($temp->saveOrFail() && $t->saveOrFail() && $user->deductCredits($recharge))
                 return APIResponse($requestType, ['user' => $user->toArray()]);

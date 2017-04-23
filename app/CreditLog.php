@@ -21,10 +21,11 @@ class CreditLog extends Model
         'credited' => 'boolean',
         'value' => 'float',
         'ip' => 'ip',
+        'amount' => 'float'
     ];
 
     protected $appends = [
-        'log', 'date', 'debited', 'credits'
+        'log', 'date', 'debited', 'amount'
     ];
 
     public function user()
@@ -52,6 +53,11 @@ class CreditLog extends Model
         return number_format($value, 2);
     }
 
+    public function getAmountAttribute($value)
+    {
+        return $this->value;
+    }
+
     public function getLogAttribute()
     {
         return $this->log_line;
@@ -65,11 +71,6 @@ class CreditLog extends Model
     public function getDebitedAttribute()
     {
         return !$this->credited;
-    }
-
-    public function getCreditsAttribute()
-    {
-        return $this->value;
     }
 
 }
