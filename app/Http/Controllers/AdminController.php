@@ -2,9 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\DeviceId;
 use App\InstallLog;
 use App\Offer;
+use App\RechargeRequest;
 use App\User;
 use Illuminate\Http\Request;
 use function redirect;
@@ -110,7 +110,7 @@ class AdminController extends Controller
 
     public function listRecharge()
     {
-        return view('listRecharge', status(['recharges' => DeviceId::all()]));
+        return view('listRecharge', status(['recharges' => RechargeRequest::all()]));
     }
 
     public function listOfferInstalls()
@@ -120,7 +120,7 @@ class AdminController extends Controller
 
     public function approveRecharge($id)
     {
-        $recharge = DeviceId::findOrFail($id);
+        $recharge = RechargeRequest::findOrFail($id);
 
         if ($recharge && $recharge->approved === false) {
             $recharge->approved = true;
