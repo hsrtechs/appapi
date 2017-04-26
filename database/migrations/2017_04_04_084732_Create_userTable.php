@@ -27,6 +27,7 @@ class CreateUserTable extends Migration
             $table->string('access_token')->unique();
             $table->integer('user_id')->unsigned();
             $table->boolean('verified')->default(true);
+            $table->string('password_reset')->nullable();
 
             $table->timestamps();
 

@@ -16,11 +16,14 @@
 | Get availed offers | POST | /api/v1/app/installed | TRUE | \
 | Confirm Installation | POST | /api/v1/app/install/success | {package} = package of the installed app | TRUE | \
 
-Change Log for ***1.4.1***
+Change Log for 
 
+***1.4.1***
 1) User Credit Logs API /api/v1/user/credit/logs \
     a. Changed input variable **package** to **package_id** \
     b. Changed output key **credits** to **amount** \
 2) User Registration API /api/v1/user/create \
     a. Added Optional Parameter referral_token 
     
+***1.4.2***
+1) User Change Password now Require **old_password** parameter

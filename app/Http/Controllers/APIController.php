@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\CreditLog;
+use App\DeviceId;
 use App\InstallLog;
 use App\Offer;
-use App\RechargeRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -14,7 +14,6 @@ use const true;
 use function APIError;
 use function is_integer;
 use function json_decode;
-use function password_verify;
 use function str_random;
 
 
@@ -45,7 +44,7 @@ class APIController extends Controller
         if (!empty($json))
             return APIResponse($requestType, ['offers' => $json]);
         else
-            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 404);
+            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 504);
 
     }
 
@@ -62,15 +61,15 @@ class APIController extends Controller
         if (!empty($user))
             return APIResponse($requestType, ['user' => $user->toArray()]);
         else
-            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 404);
+            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 504);
     }
 
     public function getUserCredits(int $user = NULL)
     {
         $requestType = 'GetUsersCredits';
-        if (!empty($user)) {
+        if (!empty($user))
             $credits = User::where('id', $user)->first()->credits ?? NULL;
-        } else {
+        else {
             if (Auth::check())
                 $credits = (float)Auth::user()->credits;
             else
@@ -80,7 +79,7 @@ class APIController extends Controller
         if (!is_null($credits))
             return APIResponse($requestType, ['credits' => $credits]);
         else
-            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 404);
+            return APIError($requestType, ['Entry not found' => 'The item you are trying to access cannot be found.'], 504);
     }
 
     public function createUser(Request $request)
@@ -93,7 +92,7 @@ class APIController extends Controller
                 'number' => 'required|numeric|unique:users|digits_between:7,12',
                 'email' => 'required|email|unique:users',
                 'country' => 'required|string',
-                'device_id' => 'required|min:10|max:20|unique:users',
+                'device_id' => 'required|min:10|max:20|unique:users|unique:device_id',
                 'referral_token' => 'string|min:6|exists:users'
             ]);
 
@@ -183,7 +182,6 @@ class APIController extends Controller
 
     public function requestRecharge(Request $request)
     {
-
         $requestType = 'RequestRecharge';
         try {
             $this->validate($request, [
@@ -191,7 +189,6 @@ class APIController extends Controller
                 'number' => 'required|integer|digits_between:7,12',
                 'provider' => 'required|string'
             ]);
-
 
             $user = Auth::user();
             $recharge = (int)$request->input('recharge');
@@ -201,7 +198,7 @@ class APIController extends Controller
             if ($user->credits < $recharge)
                 return APIError($requestType, ["Invalid id" => "Insufficient Credits."]);
 
-            $temp = new RechargeRequest;
+            $temp = new DeviceId;
             $temp->user_id = $user->id;
             $temp->recharge = $recharge;
             $temp->number = $number;
@@ -230,21 +227,21 @@ class APIController extends Controller
             $this->validate($request, [
                 'email' => 'required|email|exists:users',
                 'password' => 'required|string|min:8',
-                'device_id' => 'required|min:10|max:20',
+                'device_id' => 'required|min:10|max:20|unique:device_id',
             ]);
 
             $user = User::where('email', $request->input('email'))->first();
 
-            if (!password_verify($request->input('password'), $user->password))
-                return APIError($requestType, ['error' => 'Invalid Password.']);
-
             if (!$user->verified)
                 return APIError($requestType, ['error' => 'User is not Verified.'], 401);
 
+            if (!$user->verifyPassword($request->input('password')))
+                return APIError($requestType, ['error' => 'Invalid Password.']);
+
             $temp = User::where('device_id', $request->input('device_id'))->first();
 
-            if (empty($temp) || $temp->id != $user->id)
-                return APIError($requestType, ['error' => 'Device already registered with another ID.'], 401);
+            if (!empty($temp) && $temp->id != $user->id)
+                return APIError($requestType, ['error' => 'Device already registered with another user.'], 401);
 
             if ($user->updateAccessToken() && $user->updateDeviceId($request->input('device_id')))
                 return APIResponse($requestType, ['user' => $user->makeVisible('access_token')->toArray()]);
@@ -263,6 +260,7 @@ class APIController extends Controller
         $requestType = 'ChangePasswordRequest';
         try {
             $this->validate($request, [
+                'old_password' => 'required|string|min:8',
                 'password' => 'required|string|min:8',
             ]);
 
@@ -270,6 +268,9 @@ class APIController extends Controller
 
             if (!$user->verified)
                 return APIError($requestType, ['error' => 'User is not Verified.'], 401);
+
+            if (!$user->verifyPassword($request->input('old_password')))
+                return APIError($requestType, ['error' => 'Invalid old password.'], 401);
 
             if ($user->changePassword($request->input('password')))
                 return APIResponse($requestType, ['user' => $user->toArray()]);
@@ -287,20 +288,12 @@ class APIController extends Controller
     public function toggleVerification()
     {
         $requestType = 'ChangePasswordRequest';
-        try {
-            $user = Auth::user();
+        $user = Auth::user();
 
-            if ($user->toggleVerified())
-                return APIResponse($requestType, ['user' => $user->toArray()]);
-            else
-                return APIError($requestType, ['error' => 'Failed for some reason']);
-
-        } catch (\Illuminate\Validation\ValidationException $e) {
-
-            return APIError($requestType, json_decode($e->getResponse()->getContent(), true), 422);
-
-        }
-
+        if ($user->toggleVerified())
+            return APIResponse($requestType, ['user' => $user->toArray()]);
+        else
+            return APIError($requestType, ['error' => 'Failed for some reason']);
     }
 
     public function creditLogs()

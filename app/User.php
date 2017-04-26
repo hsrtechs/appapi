@@ -10,6 +10,9 @@ use Illuminate\Support\Facades\Request;
 use Laravel\Lumen\Auth\Authorizable;
 use function bcrypt;
 use function getReferralCredits;
+use function hash;
+use function ip2long;
+use function password_verify;
 use function str_random;
 use function strtolower;
 use function ucfirst;
@@ -35,7 +38,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
      * @var array
      */
     protected $hidden = [
-        'access_token', 'device_id', 'updated_at', 'created_at', 'id', 'password', 'user_id'
+        'access_token', 'device_id', 'updated_at', 'created_at', 'id', 'password', 'user_id', 'password_reset'
     ];
 
     protected $casts = [
@@ -98,16 +101,33 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
         $this->saveOrFail();
     }
 
+    public function verifyPassword($password = '')
+    {
+        return password_verify($password, $this->password);
+    }
+
     public function updateAccessToken()
     {
-        $this->access_token = str_random(64);
+        $this->access_token = hash('sha1', str_random(64) . ip2long(Request::ip()));
         return $this->saveOrFail();
     }
 
     public function updateDeviceId($value)
     {
-        $this->device_id = $value;
-        return $this->saveOrFail();
+        if ($this->device_id != $value) {
+            if (is_null(DeviceId::where('device_id', $this->device_id)->first())) {
+                DeviceId::create(['device_id' => $this->device_id, 'user_id' => $this->id]);
+            }
+            $this->device_id = $value;
+            return $this->saveOrFail();
+
+        } else
+            return true;
+    }
+
+    public function DeviceID()
+    {
+        return $this->belongsTo('App\DeviceId');
     }
 
     public function referralBy()
@@ -174,13 +194,36 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
     public function changePassword($password)
     {
         $this->password = $password;
-        return $this->saveOrFail();
+        return $this->saveOrFail() ? $password : false;
     }
 
     public function toggleVerified()
     {
         $this->verified = !$this->verified;
         return $this->saveOrFail();
+    }
+
+    public function generatePasswordResetlink()
+    {
+        $id = encrypt($this->id);
+        $token = $this->updatePasswordResetToken();
+        return route('reset.email', ['id' => $id, 'token' => $token], true);
+    }
+
+    public function updatePasswordResetToken($token = NULL)
+    {
+        $token = $token ?? str_random(8);
+        $token = sha1($token);
+
+        $this->password_reset = ($token);
+
+        return $this->saveOrFail() ? $token : false;
+
+    }
+
+    public function compareResetToken($token)
+    {
+        return $this->password_reset == $token;
     }
 
 }
