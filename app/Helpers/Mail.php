@@ -92,7 +92,7 @@ class Mail
 
         $body = "<p>" . "Please " . "<a href='" . $this->user->generatePasswordResetlink() . "' target='_new'>" . "click here" . "</a>";
         $body .= " or use the below link to change your password" . "</p>";
-        $body .= "<p>" . $link . "</p>";
+        $body .= "<p>" . "<a href='" . $this->user->generatePasswordResetlink() . "' target='_new'>" . $link . "</a>";
         $body .= "<p>" . "Thank you" . "</p>";
 
         $this->setSubject('Password Reset for ' . env('APP_NAME'));
