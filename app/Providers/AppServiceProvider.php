@@ -3,8 +3,9 @@
 namespace App\Providers;
 
 use Illuminate\Support\ServiceProvider;
-use function session_status;
 use URL;
+use function session_save_path;
+use function session_status;
 
 class AppServiceProvider extends ServiceProvider
 {
@@ -21,6 +22,7 @@ class AppServiceProvider extends ServiceProvider
 
     public function register()
     {
+        session_save_path(__DIR__ . "/../../storage/framework/sessions");
         if(session_status() !== PHP_SESSION_ACTIVE)
             session_start();
     }

@@ -3,9 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\CreditLog;
-use App\DeviceId;
 use App\InstallLog;
 use App\Offer;
+use App\RechargeRequest;
 use App\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -198,7 +198,7 @@ class APIController extends Controller
             if ($user->credits < $recharge)
                 return APIError($requestType, ["Invalid id" => "Insufficient Credits."]);
 
-            $temp = new DeviceId;
+            $temp = new RechargeRequest;
             $temp->user_id = $user->id;
             $temp->recharge = $recharge;
             $temp->number = $number;

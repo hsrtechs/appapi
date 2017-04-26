@@ -10,8 +10,6 @@ use Illuminate\Support\Facades\Request;
 use Laravel\Lumen\Auth\Authorizable;
 use function bcrypt;
 use function getReferralCredits;
-use function hash;
-use function ip2long;
 use function password_verify;
 use function str_random;
 use function strtolower;
@@ -108,7 +106,7 @@ class User extends Model implements AuthenticatableContract, AuthorizableContrac
 
     public function updateAccessToken()
     {
-        $this->access_token = hash('sha1', str_random(64) . ip2long(Request::ip()));
+        $this->access_token = str_random(64);
         return $this->saveOrFail();
     }
 
