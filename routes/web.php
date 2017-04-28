@@ -33,7 +33,7 @@ $app->delete('/offers/{id}/delete',"AdminController@deleteOffer");
 $app->get('/api/list',"AdminController@listAPI");
 
 $app->get('/referral/{code}', function ($code) {
-    $url = urlencode("https://play.google.com/store/apps/details?id=com.mobcash.app&referrer=utm_source=referral&utm_content=" . $code);
+    $url = "https://play.google.com/store/apps/details?id=com.mobcash.app&referrer=utm_source%3Dreferral%26utm_content%3D" . $code;
     return redirect()->to($url);
 });
 
